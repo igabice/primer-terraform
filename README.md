@@ -1,2 +1,2 @@
-# primer-terraform
-## Provisioning infra on aws
+### primer-terraform
+Provisioning infra on aws
