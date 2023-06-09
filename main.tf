@@ -7,6 +7,22 @@ provider "aws" {
 #Retrieve the list of AZs in the current AWS region
 data "aws_availability_zones" "available" {}
 data "aws_region" "current" {}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"]
+}
 #Define the VPC
 resource "aws_vpc" "vpc" {
   cidr_block = var.vpc_cidr
@@ -14,6 +30,7 @@ resource "aws_vpc" "vpc" {
     Name        = var.vpc_name
     Environment = "demo_environment"
     Terraform   = "true"
+    Region      = data.aws_region.current.name
   }
 }
 #Deploy the private subnets
@@ -102,4 +119,16 @@ resource "aws_nat_gateway" "nat_gateway" {
   tags = {
     Name = "demo_nat_gateway"
   }
+}
+
+resource "aws_instance" "web" {
+  ami                    = ""
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.public_subnets["public_subnet_1"].id
+  vpc_security_group_ids = ["asd"]
+
+  tags = {
+    "Indentity" : ""
+  }
+
 }
